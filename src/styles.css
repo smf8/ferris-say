@@ -1,0 +1,121 @@
+@font-face {
+    font-family: IRANSansX;
+    font-style: normal;
+    font-weight: bold;
+    src: url('assets/fonts/woff/IRANSansX-Bold.woff') format('woff'),
+    url('assets/fonts/woff2/IRANSansX-Bold.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: IRANSansX;
+    font-style: normal;
+    font-weight: normal;
+    src: url('assets/fonts/woff/IRANSansX-Regular.woff') format('woff'),
+    url('assets/fonts/woff2/IRANSansX-Regular.woff2') format('woff2');
+}
+
+.container {
+    margin: 0;
+    /*padding-top: 100px;*/
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    height: auto;
+}
+
+:root {
+    color: rgba(246, 246, 246, 0);
+    /*background-color: green;*/
+}
+
+.hamster {
+    width: 400px;
+    height: auto;
+}
+
+
+.thought {
+    position: absolute;
+    font-family: IRANSansX, serif;
+    top: 0; /* Adjust this value as needed */
+    right: 40px; /* Adjust this value as needed */
+    display: flex;
+    color: black;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 30px;
+    /*min-width: 40px;*/
+    width: 220px;
+    min-height: 40px;
+    margin: 20px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.thought:before,
+.thought:after {
+    content: "";
+    background-color: #fff;
+    border-radius: 50%;
+    display: block;
+    position: absolute;
+    z-index: -1;
+}
+
+.thought:before {
+    width: 44px;
+    height: 44px;
+    top: -12px;
+    left: 28px;
+    box-shadow: -50px 30px 0 -12px #fff;
+}
+
+.thought:after {
+    bottom: -10px;
+    left: 26px;
+    width: 30px;
+    height: 30px;
+    box-shadow: -40px -34px 0 0 #fff,
+    -28px -6px 0 -2px #fff,
+    -24px 17px 0 -6px #fff,
+    -5px 25px 0 -10px #fff;
+}
+
+#chat {
+    display: none;
+}
+
+#dropdown {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.input-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+#textbox {
+    flex-grow: 1;
+    padding: 10px;
+    margin-right: 20px;
+    font-size: 16px;
+}
+
+#submit {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#submit:hover {
+    background-color: #0056b3;
+}

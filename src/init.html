@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beautiful Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Enter Config</h1>
+    <form id="userForm">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" placeholder="Enter username">
+        </div>
+        <div class="form-group">
+            <label for="server">Server Address</label>
+            <input type="text" class="form-control" id="server" placeholder="Enter server address"
+                   value="afra.smf8.fun:7899">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<script>
+    const invoke = window.__TAURI__.invoke;
+
+    window.onload = function () {
+        document.getElementById('userForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            let username = document.getElementById('username').value;
+            let server = document.getElementById('server').value;
+
+            invoke('save_settings', {"username": username, "server": server});
+
+            alert("Please quit and re-open app");
+        });
+    }
+</script>
+</body>
+</html>
