@@ -34,7 +34,8 @@
       },
       "window": {
         "show": true,
-        "hide": true
+        "hide": true,
+        "setSkipTaskbar": true
       }
     },
     "windows": [
@@ -48,6 +49,7 @@
         "visible": true,
         "titleBarStyle": "Transparent",
         "decorations": false,
+        "center": true,
         "height": 600,
         "alwaysOnTop": true,
         "skipTaskbar": true,

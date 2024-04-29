@@ -3,7 +3,7 @@
     font-style: normal;
     font-weight: bold;
     src: url('assets/fonts/woff/IRANSansX-Bold.woff') format('woff'),
-    url('assets/fonts/woff2/IRANSansX-Bold.woff2') format('woff2');
+        url('assets/fonts/woff2/IRANSansX-Bold.woff2') format('woff2');
 }
 
 @font-face {
@@ -11,7 +11,7 @@
     font-style: normal;
     font-weight: normal;
     src: url('assets/fonts/woff/IRANSansX-Regular.woff') format('woff'),
-    url('assets/fonts/woff2/IRANSansX-Regular.woff2') format('woff2');
+        url('assets/fonts/woff2/IRANSansX-Regular.woff2') format('woff2');
 }
 
 body {
@@ -43,8 +43,10 @@ body {
 .thought {
     position: absolute;
     font-family: IRANSansX, serif;
-    top: 0; /* Adjust this value as needed */
-    right: 40px; /* Adjust this value as needed */
+    top: 0;
+    /* Adjust this value as needed */
+    right: 40px;
+    /* Adjust this value as needed */
     display: flex;
     color: black;
     background-color: #fff;
@@ -83,9 +85,9 @@ body {
     width: 30px;
     height: 30px;
     box-shadow: -40px -34px 0 0 #fff,
-    -28px -6px 0 -2px #fff,
-    -24px 17px 0 -6px #fff,
-    -5px 25px 0 -10px #fff;
+        -28px -6px 0 -2px #fff,
+        -24px 17px 0 -6px #fff,
+        -5px 25px 0 -10px #fff;
 }
 
 #chat {

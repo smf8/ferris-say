@@ -38,6 +38,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         setTimeout(() => {
             appWindow.hide();
+            appWindow.setSkipTaskbar(true);
         }, 5000);
     });
 
@@ -62,7 +63,7 @@ window.addEventListener("DOMContentLoaded", () => {
             if (item === selected_option) {
                 dropdown.value = item
             }
-            
+
             dropdown.add(option);
         });
 
@@ -82,9 +83,10 @@ window.onload = function () {
     document.getElementById('submit').onclick = function () {
         var dropdown = document.getElementById('dropdown');
         var textbox = document.getElementById('textbox');
-        invoke('send_message', {"receiver": dropdown.value, "text": textbox.value});
+        invoke('send_message', { "receiver": dropdown.value, "text": textbox.value });
         toggle_view(false);
 
         appWindow.hide();
+        appWindow.setSkipTaskbar(true);
     };
 };

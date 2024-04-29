@@ -20,6 +20,7 @@ tauri = { version = "1", features = [
     "window-hide",
     "window-show",
     "process-relaunch",
+    "window-set-skip-taskbar",
 ] }
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1.37.0", features = ["full"] }
