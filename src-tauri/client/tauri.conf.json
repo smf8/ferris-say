@@ -23,6 +23,12 @@
         "all": false,
         "open": true
       },
+      "process": {
+        "all": false,
+        "exit": false,
+        "relaunch": true,
+        "relaunchDangerousAllowSymlinkMacos": false
+      },
       "dialog": {
         "all": true
       },

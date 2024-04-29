@@ -14,6 +14,10 @@
     url('assets/fonts/woff2/IRANSansX-Regular.woff2') format('woff2');
 }
 
+body {
+    background-color: transparent;
+}
+
 .container {
     margin: 0;
     /*padding-top: 100px;*/
@@ -27,7 +31,7 @@
 
 :root {
     color: rgba(246, 246, 246, 0);
-    /*background-color: green;*/
+    background-color: transparent;
 }
 
 .hamster {

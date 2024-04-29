@@ -1,10 +1,10 @@
-use crate::settings;
+use crate::settings::{self, Settings};
 use tokio::sync::mpsc::UnboundedSender;
 
 #[derive(Debug)]
 pub enum Command {
     ListUsers,
-    // Reconnect,
+    Reconnect(Settings),
     SendPrompt(String, String),
     // SaveSettings(String, String),
 }
@@ -21,15 +21,15 @@ impl CommandState {
 }
 
 #[tauri::command]
-pub async fn save_settings(username: String, server: String) -> Result<(), bool> {
+pub async fn save_settings(username: String, server: String) -> Result<String, bool> {
     let settings = settings::Settings::new(username, server);
     let res = settings.save_to_system_path();
 
-    if res.is_err() {
+    if let Ok(path) = res {
+        Ok(path)
+    } else {
         tracing::error!("failed to save settings: {}", res.err().unwrap());
         Err(true)
-    } else {
-        Ok(())
     }
 }
 

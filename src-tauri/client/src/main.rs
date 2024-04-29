@@ -84,8 +84,11 @@ fn tray_menu_handler(command_tx: UnboundedSender<Command>) -> impl Fn(&AppHandle
                 window.emit_all("send", "").unwrap();
             } else if id == "hide" {
                 let main_window = app.get_window("main").unwrap();
-
-                main_window.hide().unwrap();
+                if main_window.is_visible().unwrap() {
+                    main_window.hide().unwrap();
+                } else {
+                    main_window.show().unwrap();
+                }
             }
         }
     }
@@ -95,7 +98,9 @@ fn init_client(app: &mut App, command_rx: UnboundedReceiver<Command>) {
     let main_window = app.get_window("main").unwrap();
     let init_window = app.get_window("init-config").unwrap();
 
+    // hide all windows at startup
     init_window.hide().unwrap();
+    main_window.hide().unwrap();
 
     let config = settings::Settings::from_system_path();
     if let Err(e) = config {
@@ -136,7 +141,8 @@ fn spawn_tokio_ws(
     let _handle = tauri::async_runtime::spawn(async move {
         let mut retry_wait = time::interval(Duration::from_secs(5));
         loop {
-            let app_handle = Arc::clone(&app_handle);
+            let (cancel_app_handle, command_app_handle) =
+                (Arc::clone(&app_handle), Arc::clone(&app_handle));
             let tray_handle = Arc::clone(&tray_handle);
 
             retry_wait.tick().await;
@@ -159,7 +165,7 @@ fn spawn_tokio_ws(
 
                 tracing::info!("received ctrl+c closing connection: {:?}", close_result);
 
-                app_handle.exit(1);
+                cancel_app_handle.exit(1);
             });
 
             let message_chat_handle = ws_chat_handle.lock().await;
@@ -167,7 +173,7 @@ fn spawn_tokio_ws(
             // drop the MutexGuard to unlock it
             drop(message_chat_handle);
 
-            let mut refresh_interval = time::interval(Duration::from_secs(5));
+            let mut refresh_interval = time::interval(Duration::from_secs(10));
 
             loop {
                 let mut command_chan = command_chan.lock().await;
@@ -201,6 +207,11 @@ fn spawn_tokio_ws(
                                 .send_text(receiver, text).await{
                                     tracing::error!("failed to send text: {}", e);
                                 }
+                            }
+
+                            Command::Reconnect(_) => {
+                                tracing::debug!("received reconnect command");
+                                command_app_handle.restart();
                             }
                         }
                     }
@@ -245,7 +256,8 @@ fn init_menu_items(online_users: &Vec<String>) -> SystemTrayMenu {
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let refresh = CustomMenuItem::new("refresh".to_string(), "Refresh online users");
     let send = CustomMenuItem::new("send".to_string(), "Send a message");
-    let hide = CustomMenuItem::new("hide".to_string(), "Hide");
+    let hide = CustomMenuItem::new("hide".to_string(), "Hide/Show");
+    // let settings = CustomMenuItem::new("settings".to_string(), "Settings");
 
     let mut online_users_menu_item = SystemTrayMenu::new();
 
@@ -262,6 +274,8 @@ fn init_menu_items(online_users: &Vec<String>) -> SystemTrayMenu {
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(send)
         .add_native_item(SystemTrayMenuItem::Separator)
+        // .add_item(settings)
+        // .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(hide)
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(refresh)

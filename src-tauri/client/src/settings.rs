@@ -51,12 +51,14 @@ impl Settings {
         Self::from_file(config_file.to_str().unwrap())
     }
 
-    pub fn save_to_system_path(&self) -> anyhow::Result<()> {
+    pub fn save_to_system_path(&self) -> anyhow::Result<String> {
         fs::create_dir_all(DEFAULT_CONFIG_PATH.as_ref().unwrap())?;
         let mut config_file = PathBuf::from(DEFAULT_CONFIG_PATH.as_ref().unwrap().as_ref());
         config_file.push("x-ferris-say.json");
 
-        self.save_to_file(config_file.to_str().unwrap())
+        self.save_to_file(config_file.to_str().unwrap())?;
+
+        Ok(config_file.to_str().unwrap().to_owned())
     }
 
     pub fn save_to_file(&self, config_dir: &str) -> anyhow::Result<()> {
