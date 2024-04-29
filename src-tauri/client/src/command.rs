@@ -1,10 +1,10 @@
-use crate::settings::{self, Settings};
+use crate::settings::{self};
 use tokio::sync::mpsc::UnboundedSender;
 
 #[derive(Debug)]
 pub enum Command {
     ListUsers,
-    Reconnect(Settings),
+    // Reconnect(Settings),
     SendPrompt(String, String),
     // SaveSettings(String, String),
 }

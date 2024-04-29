@@ -80,18 +80,25 @@ fn tray_menu_handler(command_tx: UnboundedSender<Command>) -> impl Fn(&AppHandle
             } else if id == "send" {
                 let window = app.get_window("main").unwrap();
 
-                window.show().unwrap();
+                window.set_skip_taskbar(false).unwrap();
+                show_window(&window);
                 window.emit_all("send", "").unwrap();
             } else if id == "hide" {
                 let main_window = app.get_window("main").unwrap();
                 if main_window.is_visible().unwrap() {
                     main_window.hide().unwrap();
                 } else {
-                    main_window.show().unwrap();
+                    show_window(&main_window);
                 }
             }
         }
     }
+}
+
+fn show_window(w: &Window) {
+    w.center().unwrap();
+    w.set_focus().unwrap();
+    w.show().unwrap();
 }
 
 fn init_client(app: &mut App, command_rx: UnboundedReceiver<Command>) {
@@ -106,13 +113,13 @@ fn init_client(app: &mut App, command_rx: UnboundedReceiver<Command>) {
     if let Err(e) = config {
         tracing::error!("failed to read config: {}", e);
         main_window.hide().unwrap();
-        init_window.show().unwrap();
+        show_window(&init_window);
     } else if let Ok(config) = config {
         if config.username.is_empty() || config.server.is_empty() {
             tracing::error!("empty config, loading init window");
 
             main_window.hide().unwrap();
-            init_window.show().unwrap();
+            show_window(&init_window);
         } else {
             spawn_tokio_ws(config.username, config.server, main_window, app, command_rx);
         }
@@ -141,8 +148,7 @@ fn spawn_tokio_ws(
     let _handle = tauri::async_runtime::spawn(async move {
         let mut retry_wait = time::interval(Duration::from_secs(5));
         loop {
-            let (cancel_app_handle, command_app_handle) =
-                (Arc::clone(&app_handle), Arc::clone(&app_handle));
+            let cancel_app_handle = Arc::clone(&app_handle);
             let tray_handle = Arc::clone(&tray_handle);
 
             retry_wait.tick().await;
@@ -209,10 +215,10 @@ fn spawn_tokio_ws(
                                 }
                             }
 
-                            Command::Reconnect(_) => {
-                                tracing::debug!("received reconnect command");
-                                command_app_handle.restart();
-                            }
+                            // Command::Reconnect(_) => {
+                            //     tracing::debug!("received reconnect command");
+                            //     command_app_handle.restart();
+                            // }
                         }
                     }
 
@@ -234,11 +240,22 @@ fn spawn_tokio_ws(
                             {
                                 match &msg.content {
                                     MessageContent::ListUsers(list) => {
-                                        tray_handle.set_menu(init_menu_items(list)).unwrap();
-                                        window.emit_all("online_users", list).unwrap();
+                                        let online_users_without_self = list
+                                            .iter()
+                                            .filter_map(|s| {
+                                                if username.as_str() != s.as_str() {
+                                                    Some(s.to_string())
+                                                } else {
+                                                    None
+                                                }
+                                            })
+                                            .collect::<Vec<_>>();
+
+                                        tray_handle.set_menu(init_menu_items(&online_users_without_self)).unwrap();
+                                        window.emit_all("online_users", &online_users_without_self).unwrap();
                                     }
                                     MessageContent::Prompt(text) => {
-                                        window.show().unwrap();
+                                        show_window(&window);
                                         window.emit_all("chat_message", text).unwrap();
                                     }
                                     _ => {}
