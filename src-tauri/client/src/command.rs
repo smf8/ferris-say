@@ -4,9 +4,9 @@ use tokio::sync::mpsc::UnboundedSender;
 #[derive(Debug)]
 pub enum Command {
     ListUsers,
-    Reconnect,
+    // Reconnect,
     SendPrompt(String, String),
-    SaveSettings(String, String),
+    // SaveSettings(String, String),
 }
 
 #[derive(Debug)]
@@ -23,7 +23,7 @@ impl CommandState {
 #[tauri::command]
 pub async fn save_settings(username: String, server: String) -> Result<(), bool> {
     let settings = settings::Settings::new(username, server);
-    let res = settings.save_to_file("x-ferris-say.json");
+    let res = settings.save_to_system_path();
 
     if res.is_err() {
         tracing::error!("failed to save settings: {}", res.err().unwrap());

@@ -26,6 +26,8 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 anyhow = "1.0.82"
 tracing = "0.1.40"
 config = "0.14.0"
+directories = "5.0.1"
+lazy_static = "1.4.0"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

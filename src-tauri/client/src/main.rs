@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-pub mod command;
+mod command;
 mod settings;
 
 use std::sync::Arc;
@@ -97,7 +97,7 @@ fn init_client(app: &mut App, command_rx: UnboundedReceiver<Command>) {
 
     init_window.hide().unwrap();
 
-    let config = settings::Settings::from_file("x-ferris-say.json");
+    let config = settings::Settings::from_system_path();
     if let Err(e) = config {
         tracing::error!("failed to read config: {}", e);
         main_window.hide().unwrap();
@@ -202,8 +202,6 @@ fn spawn_tokio_ws(
                                     tracing::error!("failed to send text: {}", e);
                                 }
                             }
-
-                            _ => {}
                         }
                     }
 
