@@ -1,4 +1,4 @@
-use crate::ws::message::{ChatMessage, MessageContent};
+use crate::message::{ChatMessage, MessageContent};
 
 use anyhow::anyhow;
 use futures_util::stream::SplitSink;

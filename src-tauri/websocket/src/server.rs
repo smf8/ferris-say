@@ -1,7 +1,6 @@
-use crate::ws::message::{ChatError, ChatMessage, MessageContent};
+use crate::message::{ChatError, ChatMessage, MessageContent};
 use axum::extract::ws::Message::Text;
 use axum::extract::{ConnectInfo, Path, State};
-use axum::http::StatusCode;
 use axum::{
     extract::ws::{WebSocket, WebSocketUpgrade},
     http,
@@ -13,7 +12,6 @@ use futures_util::{SinkExt, StreamExt};
 
 use std::collections::HashMap;
 use std::net::SocketAddr;
-use std::string::ToString;
 use std::sync::Arc;
 use tokio::select;
 use tokio::sync::mpsc::Sender;
@@ -40,6 +38,8 @@ pub async fn server_init(port: &str) -> anyhow::Result<()> {
         .await
         .unwrap();
 
+    tracing::info!("started listening on 0.0.0.0:{}", port);
+    
     axum::serve::serve(
         listener,
         app.into_make_service_with_connect_info::<SocketAddr>(),
@@ -129,7 +129,7 @@ async fn handle_socket(socket: WebSocket, user_name: String, group_state: Arc<Gr
                                 let target_user_tx = user_sinks.get(&chat_message.to);
 
                                 if target_user_tx.is_none() &&
-                                        tx.send(ChatMessage::new(&SERVRE_IDENTITY,
+                                        tx.send(ChatMessage::new(SERVRE_IDENTITY,
                                                 &user_name,
                                                 MessageContent::Error(ChatError::UserNotOnline))).await.is_err() {
                                     tracing::info!("client disconnected");
@@ -146,7 +146,7 @@ async fn handle_socket(socket: WebSocket, user_name: String, group_state: Arc<Gr
                             MessageContent::GetUsersList => {
                                 let target_user_tx = user_sinks.get(&user_name);
                                 let online_users = list_online_users(group_state_cloned.clone()).await;
-                                let resp = ChatMessage::new(&SERVRE_IDENTITY, &user_name, MessageContent::ListUsers(online_users));
+                                let resp = ChatMessage::new(SERVRE_IDENTITY, &user_name, MessageContent::ListUsers(online_users));
 
                                 if target_user_tx.unwrap().send(resp).await.is_err() {
                                     tracing::info!("client disconnected");

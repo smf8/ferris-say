@@ -1,7 +1,7 @@
 {
   "build": {
-    "devPath": "../src",
-    "distDir": "../src",
+    "devPath": "../../src",
+    "distDir": "../../src",
     "withGlobalTauri": true
   },
   "package": {
@@ -10,21 +10,7 @@
   },
   "tauri": {
     "cli": {
-      "description": "Something cool written in Rust",
-      "subcommands": {
-        "server": {
-          "description": "server instance of x-ferris-say",
-          "args": [
-            {
-              "name": "port",
-              "short": "p",
-              "takesValue": true,
-              "multiple": false,
-              "required": true
-            }
-          ]
-        }
-      }
+      "description": "Something cool written in Rust"
     },
     "systemTray": {
       "iconPath": "icons/icon.png",

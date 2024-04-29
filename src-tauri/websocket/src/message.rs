@@ -4,6 +4,7 @@ use axum::extract::ws::Message as AxumMessage;
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 use tokio_tungstenite::tungstenite::Message;
+use MessageContent::Close;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ChatMessage {
@@ -51,13 +52,13 @@ impl TryInto<Message> for ChatMessage {
 
     fn try_into(self) -> Result<Message, Self::Error> {
         match &self.content {
+            Close() => Ok(Message::Close(None)),
+
             _ => {
                 let json_str = serde_json::to_string(&self)?;
 
                 Ok(Message::Text(json_str))
             }
-
-            MessageContent::Close() => Ok(Message::Close(None)),
         }
     }
 }
@@ -70,7 +71,7 @@ impl TryFrom<Message> for ChatMessage {
             ChatMessage::from_str(&text_msg)
                 .map_err(|e| anyhow!("parse '{}' failed: {:?}", &text_msg, e))
         } else if let Message::Close(_) = value {
-            Ok(ChatMessage::new("", "", MessageContent::Close()))
+            Ok(ChatMessage::new("", "", Close()))
         } else {
             Err(anyhow!("got invalid message type: {:?}", value))
         }
@@ -85,7 +86,7 @@ impl TryFrom<AxumMessage> for ChatMessage {
             ChatMessage::from_str(&text_msg)
                 .map_err(|e| anyhow!("parse '{}' failed: {:?}", &text_msg, e))
         } else if let AxumMessage::Close(_) = value {
-            Ok(ChatMessage::new("", "", MessageContent::Close()))
+            Ok(ChatMessage::new("", "", Close()))
         } else {
             Err(anyhow!("got invalid message type: {:?}", value))
         }

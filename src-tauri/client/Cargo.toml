@@ -1,0 +1,32 @@
+[package]
+name = "client"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "1", features = [] }
+
+[dependencies]
+serde_json = "1.0.116"
+websocket = { path = "../websocket" }
+tauri = { version = "1", features = [
+    "dialog-all",
+    "macos-private-api",
+    "shell-open",
+    "system-tray",
+    "cli",
+    "window-hide",
+    "window-show",
+] }
+serde = { version = "1", features = ["derive"] }
+tokio = { version = "1.37.0", features = ["full"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+anyhow = "1.0.82"
+tracing = "0.1.40"
+config = "0.14.0"
+
+[features]
+# This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]

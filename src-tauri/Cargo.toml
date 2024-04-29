@@ -1,32 +1,4 @@
-workspace = {}
-[package]
-name = "x-ferris-say"
-version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
-edition = "2021"
+[workspace]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[build-dependencies]
-tauri-build = { version = "1", features = [] }
-
-[dependencies]
-tauri = { version = "1", features = [ "dialog-all", "macos-private-api", "shell-open", "system-tray", "cli", "window-hide", "window-show"] }
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-anyhow = "1.0.81"
-axum = { version = "0.7.5", features = ["ws"] }
-tokio = { version = "1.37.0", features = ["full"] }
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-tower = { version = "0.4", features = ["util"] }
-tower-http = { version = "0.5.0", features = ["fs", "trace"] }
-tracing = "0.1.40"
-futures-util = "0.3.30"
-tokio-tungstenite = {version = "0.21.0", features= ["rustls-tls-native-roots"] }
-retry = "2.0.0"
-config = "0.14.0"
-
-[features]
-# This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
-custom-protocol = ["tauri/custom-protocol"]
+members = ["client", "server", "websocket"]
+resolver = "2"

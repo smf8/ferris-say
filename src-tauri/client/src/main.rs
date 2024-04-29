@@ -3,12 +3,10 @@
 
 pub mod command;
 mod settings;
-mod ws;
 
-use crate::ws::client;
-use serde_json::Value;
 use std::sync::Arc;
 use std::time::Duration;
+use websocket::client;
 
 use tauri::{
     App, AppHandle, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
@@ -16,12 +14,12 @@ use tauri::{
 };
 use tokio::{select, time};
 
-use crate::ws::message::MessageContent;
 use command::Command;
-use tokio::sync::mpsc::{Receiver, UnboundedReceiver, UnboundedSender};
+use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::sync::{mpsc, Mutex};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
+use websocket::message::MessageContent;
 
 fn main() -> anyhow::Result<()> {
     tracing_subscriber::registry()
@@ -52,40 +50,6 @@ fn main() -> anyhow::Result<()> {
             // only on MacOS to stop it from being displayed in cmd+tab list
             #[cfg(target_os = "macos")]
             app.set_activation_policy(tauri::ActivationPolicy::Accessory);
-
-            if let Ok(matches) = app.get_cli_matches() {
-                let sub_command = matches.subcommand;
-
-                if let Some(sub_command) = sub_command {
-                    let args = sub_command.matches.args;
-                    if sub_command.name.as_str() == "server" {
-                        let port = args.get("port").unwrap();
-
-                        if let Value::String(port) = port.value.clone() {
-                            tauri::async_runtime::spawn(async move {
-                                let _server = ws::server::server::server_init(&port).await;
-                            });
-
-                            tauri::async_runtime::block_on(async {
-                                tokio::signal::ctrl_c().await.unwrap();
-
-                                app.handle().exit(1);
-                            });
-                        } else {
-                            tracing::error!("invalid port provided: {}", port.value);
-
-                            app.app_handle().exit(1);
-                        }
-                    }
-                }
-            } else {
-                tracing::error!(
-                    "invalid usage of cli: {}",
-                    app.get_cli_matches().err().unwrap()
-                );
-
-                app.app_handle().exit(1);
-            }
 
             init_client(app, rx);
 
@@ -178,7 +142,7 @@ fn spawn_tokio_ws(
             retry_wait.tick().await;
 
             let ws_chat_handle =
-                client::client::init_client(username.to_string(), server.to_string()).await;
+                client::init_client(username.to_string(), server.to_string()).await;
 
             if let Err(e) = ws_chat_handle {
                 tracing::error!("failed to initialize websocket: {:?}", e);
